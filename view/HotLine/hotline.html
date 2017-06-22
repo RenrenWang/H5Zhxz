@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en" class="feedback">
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>服务热线</title>
+		<script src="html5plus://ready"></script>
+		<link rel="stylesheet" type="text/css" href="../../css/mui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/base.css" />
+		<link rel="stylesheet" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/style.css" />
+
+		<style>
+
+		</style>
+	</head>
+
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav w-top-bar  w-top-xfxcd">
+		
+			<h1 class="mui-title" id="title">服务热线</h1>
+		</header>
+		<div class="mui-content">
+			
+			
+				
+				<div id="pullrefresh" class="mui-content mui-scroll-wrapper classify-wrapper" style="padding-top: 0px;">
+					<div class="mui-scroll">
+
+					
+			<ul class="mui-table-view mui-table-view-striped mui-table-view-condensed notice-list" >
+		       <!--<li class="mui-table-view-cell">
+		            <div class="mui-table">
+		                <div class="mui-table-cell mui-col-xs-10">
+		                    <h4 class="mui-ellipsis-2" >江山县白鹤镇余村吴珍珍超市电话</h4>
+		                    <h5>13875248651</h5>
+		                    <p class="mui-h6 mui-ellipsis">江山县白鹤镇余村</p>
+		                </div>
+		                <div class="mui-table-cell mui-col-xs-2 mui-text-right">
+		                    <span class="mui-h5">12:25</span>
+		                     
+		                </div>
+		            </div>
+		        </li>-->
+		      
+		     
+		      
+		      
+		         
+		    </ul>
+					</div>
+				</div>
+
+		
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+<script src="../../js/common.js"></script>
+		<script type="text/javascript">
+			mui.init();
+				mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+
+					up: {
+						auto:true,
+						contentrefresh: '正在加载...',
+						callback: pullupRefresh
+					}
+				}
+			});
+
+			var page = 1;
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			function pullupRefresh() {
+				 mui.ajax(BASEURL + "/newsAction.action?affType=SR", {
+
+				dataType: 'json', //服务器返回json格式数据
+				type: 'get', //HTTP请求类型
+				timeout: 10000, //超时时间设置为10秒；
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				success: function(data) {
+					
+					if(data.result == "success") {
+                           
+						mui('#pullrefresh').pullRefresh().endPullupToRefresh(++page >=0);
+						var data = data.data;
+						//参数为true代表没有更多数据了。
+					var table = document.body.querySelector('.mui-table-view ');
+
+						for(var i = 0; i < data.length; i++) {
+							var li = document.createElement('li');
+					    li.className='mui-table-view-cell';
+						li.innerHTML = '<div class="mui-table">'+
+		                '<div class="mui-table-cell mui-col-xs-10">'+
+		                    '<h4 class="mui-ellipsis-2 mui-h4" >'+data[i]['conName']+'</h4>'+
+		                    '<h5>'+data[i]['conTel']+'</h5>'+
+		                    '<p class="mui-h6 mui-ellipsis">'+data[i]['conAddr']+'</p>'+
+		                '</div>'+
+		                '<div class="mui-table-cell mui-col-xs-2 mui-text-right">'+
+		                    '<a  href="tel:'+data[i]['conTel']+'" class="mui-h5" style="width:20px;height:20px;display:inline-block"><span class="mui-icon iconfont icon-dianhua font_main"></span></a>'+
+		                     
+		                '</div>'+
+		            '</div>'+
+								'</a>';
+						table.appendChild(li);
+						}
+
+					} else if(data.result == "fail") {
+						mui.toast(data.msg, {
+							duration: 'long',
+							type: 'div'
+						});
+						mui('#pullrefresh').pullRefresh().endPullupToRefresh(true)
+					}
+				},
+				error: function(xhr, type, errorThrown) {
+					//异常处理；
+					console.log(type);
+				}
+			});
+			}
+			
+
+		
+		</script>
+	</body>
+
+</html>

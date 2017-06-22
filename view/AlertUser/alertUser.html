@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/base.css" />
+		<link rel="stylesheet" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" href="../../css/style.css" />
+		<link rel="stylesheet" href="../../css/mui.picker.css" />
+		<link rel="stylesheet" href="../../css/mui.poppicker.css" />
+		<style>
+			html,
+			body {
+				background-color: #efeff4;
+			}
+			
+			.title {
+				margin: 20px 15px 10px;
+				color: #6d6d72;
+				font-size: 15px;
+			}
+			
+			.me-list {
+				margin-top: 15px;
+			}
+			
+			.item-r {
+				position: absolute;
+				top: 50%;
+				right: 30px;
+				-webkit-transform: translateY(-50%);
+				transform: translateY(-50%);
+			}
+			
+			.mui-table-view-cell {
+				padding-right: 8px;
+				padding-left: 8px;
+			}
+			
+			.sex-model {
+				position: fixed;
+				width: 90%;
+				top: 50%;
+				left: 50%;
+				transform: translate3d(-50%, -50%, 0);
+				-webkit-transform: translate3d(-50%, -50%, 0);
+			}
+		</style>
+	</head>
+
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav w-top-bar  w-top-xfxcd">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" onclick='bk()'></a>
+			<h1 class="mui-title" id="title">个人中心</h1>
+		</header>
+
+		<div class="mui-content" id="mui-content">
+
+		</div>
+		<div class="sex-model" id="sex-model" style="display:none;z-index: 9999;">
+
+			<div class="mui-card" style="height:300px;overflow-y: auto;">
+
+				<form class="mui-input-group" id="mui-input-group">
+				</form>
+			</div>
+
+		</div>
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/common.js"></script>
+	<script type="text/javascript" src="../../js/mui.picker.js"></script>
+	<script type="text/javascript" src="../../js/mui.poppicker.js"></script>
+	<script>
+		mui.init({
+			swipeBack: true //启用右滑关闭功能
+		});
+
+		//		function logout(){
+		//			document.getElementById('usernameInfo').innerHTML="";
+		//			localStorage.removeItem("user");
+		//			html='<p>'+
+		//		    		 	'<a href="javascript:;" class="mui-h4" style="color: #fff;" onclick="toUrl(this)" data-href="../Login/login.html">'+
+		//		    		 	  '立即登录'+
+		//		    		    '</a>'+
+		//		    		 '</p>';
+		//		   document.getElementById('usernameInfo').innerHTML=html;
+		//		}
+		var user = isLogin();
+		var pinfoDeptnum = 0;
+		var _pinfoSex = "男";
+		var ws = null;
+
+		mui.plusReady(function() {
+			ws = plus.webview.currentWebview();
+
+			ws.addEventListener('close', function() {
+				//plus.webview.getWebviewById('./view/Me/me.html').reload();
+				setLocalStorage('user', user);
+			})
+		});
+
+		mui.ready(function() {
+
+			if(!user) {
+				plus.webview.currentWebview().close();
+			}
+
+			mui.ajax(BASEURL + "/newsAction.action?affType=UR&pinfoId=" + user.pinfoId, {
+
+				dataType: 'json', //服务器返回json格式数据
+				type: 'get', //HTTP请求类型
+				timeout: 10000, //超时时间设置为10秒；
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				success: function(data) {
+
+					if(data.result == "success") {
+						var data = (data.data)[0];
+						pinfoDeptnum = data.pinfoDept;
+						_pinfoSex = data.pinfoSex;
+						document.getElementById('mui-input-group').innerHTML = "";
+						var html = '<ul class="mui-table-view  me-list" style="margin: 0;">' +
+							'<li class="mui-table-view-cell">' +
+							'<a class="" >' +
+							'我的头像  <span class="item-r"><img src="../../img/icon_user_white.png" height="30px" width="30px"/></span>' +
+							'</a>' +
+							'</li>' +
+							'<li class="mui-table-view-cell">' +
+							'<a class="mui-navigate-right" onclick="changUsername()">' +
+							'用户名 <span class="item-r" id="username">' + isNull(data.pinfoName) + '</span>' +
+							'</a>' +
+							'</li>' +
+							'<li class="mui-table-view-cell">' +
+							'<a class="" >' +
+							'绑定手机 <span class="item-r">' + isNull(data.pinfoPhone) + '</span>' +
+							'</a>' +
+							'</li>' +
+							'<li class="mui-table-view-cell">' +
+							'<a class="mui-navigate-right" onclick="pinfoSname()">' +
+							'个性签名<span class="item-r" id="pinfoSname">' + isNull(data.pinfoSname) + '</span>' +
+							'</a>' +
+							'</li>' +
+							'<li class="mui-table-view-cell">' +
+							'<a class="mui-navigate-right" onclick="pinfoPname()">' +
+							'姓名<span class="item-r" id="pinfoPname">' + isNull(data.pinfoPname) + '</span>' +
+							'</a>' +
+							'</li>' +
+							'<li class="mui-table-view-cell">' +
+							'<a class="mui-navigate-right" onclick="showSexMode()">' +
+							'性别<span class="item-r" id="pinfoSex">' + isNull(data.pinfoSex) + '</span>' +
+							'</a>' +
+							'</li>' +
+							'<li class="mui-table-view-cell" onclick="showCityPicker()">' +
+							'<a class="mui-navigate-right">' +
+							'区域<span class="item-r" id="cityResult">' + isNull(data.townTitle) + '-' + isNull(data.villTitle) + '</span>' +
+							'</a>' +
+							'</li>' +
+							'<li class="mui-table-view-cell">' +
+							'<a class="mui-navigate-right" onclick="pinfoDept()">' +
+							'单位<span class="item-r" id="pinfoDept" data-id="' + data.pinfoDept + '">' + isNull(data.deparTitle) + '</span>' +
+							'</a>' +
+							'</li>' +
+
+							'</ul>' +
+
+							'<ul class="mui-table-view  me-list" >' +
+							'<li class="mui-table-view-cell">' +
+							'<a class="mui-navigate-right" >' +
+							' 我的等级<span class="item-r">' + isNull(data.pinfoLevel) + '</span>' +
+							'</a>' +
+							'</li>' +
+							'<li class="mui-table-view-cell">' +
+							'<a class="mui-navigate-right" >' +
+							' 我的积分<span class="item-r">' + isNull(data.pinfoRate) + '</span>' +
+							'</a>' +
+							'</li>' +
+
+							'</ul>' +
+							'<ul class="mui-table-view  me-list" >' +
+							'<li class="mui-table-view-cell">' +
+							'<a class="mui-navigate-right" href="javascript:;" data-href="./updatePassword.html" onclick="toUrl(this)">' +
+							' 修改密码' +
+							'</a>' +
+							'</li>' +
+
+							'</ul>';
+
+						document.getElementById('mui-content').innerHTML = html;
+
+					} else if(data.result == "fail") {
+						mui.toast(data.msg, {
+							duration: 'long',
+							type: 'div'
+						});
+
+					}
+				},
+				error: function(xhr, type, errorThrown) {
+					//异常处理；
+					console.log(type);
+				}
+			});
+
+		})
+
+		//						if (e.index == 1) {
+		//							info.innerText = '谢谢你的评语：' + e.value;
+		//						} else {
+		//							info.innerText = '你点了取消按钮';
+		//		}
+
+		function showCityPicker() {
+			//var City_1={
+			//  value: "",
+			//  text: "",
+			//	children: []
+			//};
+
+			var cityPicker = new mui.PopPicker({
+				layer: 2
+			});
+			var showCityPickerButton = document.getElementById('showCityPicker');
+			var cityResult = document.getElementById('cityResult');
+			var  str="";
+			 cityResult.innerText="";
+			cityPicker.show(function(items) {
+				var children = '';
+				 var pinfoTown='';
+				 var pinfoVill="";
+				if(items[1].text) {
+					children = "-" + items[1].text;
+					pinfoVill=items[1].value;
+				}
+				  str= items[0].text + children;
+				  pinfoTown=items[0].value;
+				var pinfoDept = "pinfoTown=" + pinfoTown + "&pinfoVill=" +pinfoVill;
+				postMsg(pinfoDept, function(data) {
+                     cityResult.innerText=str;
+                     
+				})
+				//返回 false 可以阻止选择框的关闭
+			});
+			var tvs = [];
+			var cityData = [];
+			//	cityData.push({value: data1[i]['townId'],
+			//									text: data[i]['townTitle'],
+			//									children: [{
+			//									 value: data2[t]['townId'],
+			//									 text: data2[t]['townTitle'],
+			//									  }]
+			//									}	)
+
+			_ajax('/baseDataAction.action?dataType=TOWN', function(data1) {
+
+				for(var i = 0; i < data1.length; i++) {
+
+					(function(i) {
+						var towns = {
+							value: data1[i]['townId'],
+							text: data1[i]['townTitle'],
+							children: []
+						};
+						_ajax('/baseDataAction.action?dataType=VILL&townId=' + data1[i]['townId'], function(data2) {
+							if(data2) {
+
+								for(var t = 0; t < data2.length; t++) {
+
+									towns.children.push({
+										value: data2[t]['villId'],
+										text: data2[t]['villTitle']
+									});
+
+								}
+
+							}
+
+							cityData.push(towns);
+
+							if(i == (data1.length - 1)) {
+								cityPicker.setData(cityData);
+								console.log(JSON.stringify(cityData));
+							}
+
+						})
+
+					})(i)
+				}
+
+			});
+
+			//	console.log("cityData----->" + JOSN.stringify(cityData));
+
+		}
+
+		function pinfoDept() {
+			//单位列表
+			document.getElementById('sex-model').style.display = "block"
+
+			document.querySelector('.mui-card').style.height = '300px';
+
+			_ajax('/baseDataAction.action?dataType=DEPT', function(data) {
+				var htmlModel = "";
+				for(var i = 0; i < data.length; i++) {
+
+					htmlModel += '<div class="mui-input-row mui-radio"  data-name="' + data[i].deparTitle + '" onclick="setDep(this,' + data[i].deparId + ')">' +
+						'<label>' + data[i].deparTitle + '</label>' +
+						'<input name="radio1" type="radio"' + getSex(pinfoDeptnum, data[i].deparId) + ' id="sexDef">' +
+						'</div>';
+				}
+				document.getElementById('mui-input-group').innerHTML = htmlModel;
+
+			});
+		}
+
+		function getSex(Psex, sex) {
+			//			if(!Psex) {
+			//				return "checked";
+			//			}
+
+			return Psex == sex ? "checked" : "";
+		}
+
+		function isNull(str) {
+
+			return str;
+		}
+		var btnArray = ['取消', '确定'];
+
+		function changUsername() {
+
+			mui.prompt(' ', '请输入用户名', '修改用户名', btnArray, function(e) {
+				if(e.index == 1) {
+					if(e.value != "") {
+						var str = "pinfoName=" + e.value;
+
+						postMsg(str, function(data) {
+							document.getElementById('username').innerHTML = e.value;
+							user.pinfoName = e.value;
+						})
+
+					}
+
+				}
+
+			})
+		}
+
+		function pinfoSname() {
+			mui.prompt(' ', '请输入个性签名', '修改个性签名', btnArray, function(e) {
+				if(e.index == 1) {
+					if(e.value != "") {
+						var str = "pinfoSname=" + e.value;
+
+						postMsg(str, function(data) {
+							document.getElementById('pinfoSname').innerHTML = e.value;
+							user.pinfoSname = e.value;
+						})
+
+					}
+
+				}
+
+			})
+		}
+
+		function pinfoPname() {
+			mui.prompt(' ', '请输入姓名', '修改姓名', btnArray, function(e) {
+				if(e.index == 1) {
+					if(e.value != "") {
+						var str = "pinfoPname=" + e.value;
+
+						postMsg(str, function(data) {
+							document.getElementById('pinfoPname').innerHTML = e.value;
+						})
+
+					}
+
+				}
+
+			})
+		}
+		//function pinfoDept(){
+		//		  mui.prompt(' ', '请输入单位名称', '修改单位', btnArray, function(e) {
+		//		    	if(e.index==1){
+		//		    		if(e.value!=""){
+		//		    			var str="pinfoDept="+e.value;
+		//		    			
+		//		    		     postMsg(str,function(data){
+		//		    		     	 document.getElementById('pinfoDept').innerHTML=e.value;
+		//		    		     })
+		//		    		 
+		//		    		}
+		//		    		
+		//		    	}
+		//
+		//		    })
+		//}
+
+		function showSexMode() {
+			document.getElementById('sex-model').style.display = "block"
+
+			document.querySelector('.mui-card').style.height = 'auto';
+			var htmlModel = '<div class="mui-input-row mui-radio " onclick="pinfoSex(0)">' +
+				'<label>男</label>' +
+				'<input name="radio1" type="radio"' + getSex(_pinfoSex, "男") + ' id="sexDef">' +
+				'</div>' +
+				'<div class="mui-input-row mui-radio " onclick="pinfoSex(1)">' +
+				'<label>女</label>' +
+				'<input name="radio1" type="radio" ' + getSex(_pinfoSex, "女") + '>' +
+				'</div>';
+			document.getElementById('mui-input-group').innerHTML = htmlModel;
+
+		}
+
+		function setAddree(pinfoTown, pinfoVill) {
+
+			var pinfoDept = "pinfoTown=" + pinfoTown + "&pinfoVill=" + pinfoVill;
+			postMsg(pinfoDept, function(data) {
+
+			})
+		}
+
+		function setDep(_this, str) {
+
+			var pinfoDept = "pinfoDept=" + str;
+			postMsg(pinfoDept, function(data) {
+				document.getElementById('pinfoDept').innerText = _this.getAttribute('data-name');
+				//document.getElementById('pinfoDept').setAttribute('')
+				pinfoDeptnum = str;
+				document.getElementById('sex-model').style.display = "none"
+				document.getElementById('mui-input-group').innerHTML = "";
+			})
+		}
+
+		function pinfoSex(str) {
+			var sexs = ["男", "女", "保密"];
+			var sex = "pinfoSex=" + sexs[str];
+			postMsg(sex, function(data) {
+				document.getElementById('pinfoSex').innerText = sexs[str];
+				_pinfoSex = sexs[str];
+				document.getElementById('sex-model').style.display = "none"
+				document.getElementById('mui-input-group').innerHTML = "";
+			})
+		}
+
+		function postMsg(postStr, callback) {
+			var str = "/newsAction.action?affType=UP&pinfoId=" + user.pinfoId + "&" + postStr;
+			console.log(str);
+			mui.ajax(BASEURL + str, {
+
+				dataType: 'json', //服务器返回json格式数据
+				type: 'get', //HTTP请求类型
+				timeout: 10000, //超时时间设置为10秒；
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				success: function(data) {
+					console.log(JSON.stringify(data))
+					if(data.result == "success") {
+						callback(data.data);
+
+					} else if(data.result == "fail") {
+						//						mui.toast(data.msg, {
+						//							duration: 'long',
+						//							type: 'div'
+						//						});
+						callback(false)
+					}
+
+				},
+				error: function(xhr, type, errorThrown) {
+					//异常处理；
+					console.log(type);
+				}
+			});
+		}
+	</script>
+
+</html>

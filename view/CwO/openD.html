@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<script type="text/javascript" src="../../js/flexible.js"></script>
+		<link rel="stylesheet" href="../../css/base.css" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" href="../../css/style.css" />
+		<link rel="stylesheet" href="../../css/imgBig.css" />
+	</head>
+
+	<body class="bg_FFF">
+
+		<div class="mui-content bg_FFF" style="padding-bottom: 50px;background: #fff;height: 100%;">
+			<div id="w-warp">
+				
+			</div>
+		</div>
+		<div class="text-footer mui-bar">
+			<a href="javascript:;" onclick="bk()"><span class="mui-icon iconfont icon-jiantou1"></span></a>
+
+			<!--<a href="javascript:;" class="mui-pull-right"><span class="mui-icon iconfont icon-bianjizitidaxiao"></span></a>
+
+			<a href="javascript:;" class="mui-pull-right"><span class="mui-icon iconfont icon-share"></span></a>-->
+		<!--	<a href="javascript:;" class="mui-pull-right"><span class="mui-icon iconfont icon-shoucang"></span></a>-->
+			<a href="javascript:;" data-href="./openComment.html" data-id="1" data-type="C" onclick="toUrl(this)" class="mui-pull-right" id="toCommon"><span class="mui-icon iconfont icon-duihuakuang" style="transform: translateY(3px);"></span></a>
+			<!--<a href="javascript:;" class="mui-pull-right"><span class="mui-icon iconfont icon-23"></span></a>-->
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script src="../../js/mui.zoom.js"></script>
+	<script src="../../js/mui.previewimage.js"></script>
+		<script>
+			mui.init()
+			
+  mui.previewImage();
+			window.addEventListener('id', function(event) {
+
+				console.log("event.detail------------>"+JSON.stringify(event.detail));
+				setHtml(event.detail.id,event.detail.type);
+			})
+
+			function setHtml(id,type) {
+				mui.ajax(BASEURL + "/newsAction.action?affType=SF&infoId=" + id, {
+
+					dataType: 'json', //服务器返回json格式数据
+					type: 'get', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+	console.log(JSON.stringify(data))
+					if(data.result == "success") {
+							var attachData=data.attachData;
+							var data = (data.data)[0];
+							var fileHtml="";
+							  
+						if(attachData){
+						
+							for(var i=0;i<attachData.length;i++){
+							 if(attachData[i].lidType=="A"){
+									fileHtml+='<a href="javascript:;"  style="margin:10px 10px 10px 0;display:block;" data-href="'+attachData[i]['lidFileuri']+'" onclick="createDownload(this)">'+fileName(attachData[i]['lidFileuri'])+'</a>';
+								}else if(attachData[i].lidType=="M"){
+									fileHtml+='<img src="'+FILEURL+attachData[i]['lidFileuri']+'" style="width:100%" data-preview-src="" data-preview-group="1"  >';
+								  console.log(JSON.stringify(fileHtml))
+								}
+							}
+						}
+						
+					var files1=data['attachUri1']?'<p style="margin-top:10px;padding-top:10px;color:#000; border-top: 1px solid #d8d8d8;">附件下载：</p><a href="javascript:;" style="margin:10px 10px 10px 0;display:block;" data-href="'+data['attachUri1']+'" onclick="createDownload(this)">'+fileName(data['attachUri1'])+'</a>':"";
+					var files2=data['attachUri2']?'<a href="javascript:;"  style="margin:10px 10px 10px 0;display:block;" data-href="'+data['attachUri2']+'" onclick="createDownload(this)">'+fileName(data['attachUri2'])+'</a>':"";
+					var files3=data['attachUri3']?'<a href="javascript:;"  style="margin:10px 10px 10px 0;display:block;" data-href="'+data['attachUri3']+'" onclick="createDownload(this)">'+fileName(data['attachUri3'])+'</a>':"";	
+					          
+				    '<a href="javascript:;" data-href="'+data['attachUri2']+'">附件2</a>'+
+				    '<a href="javascript:;" data-href="'+data['attachUri3']+'">附件3</a>';
+							var html='<div class="text-top">'+
+					'<h2>'+data.infoTitle+'</h2>'+
+					'<p><span>'+(new Date(data['createDate']).Format("yyyy-MM-dd hh:mm:ss"))+'</span><!--<span class="mui-pull-right"><font class="font">0</font>条评论</span><span class="mui-pull-right">来源</span>--></p>'+
+				'</div>'+
+				'<div class="text-content" id="textContent">'+
+			//'<img src='+imgurl+' style="width:100%" data-preview-src="" data-preview-group="1"  >'+
+
+				     data.infoDescription+fileHtml+
+				//files1+files2+files3+
+				'</div>';
+				
+				document.getElementById('w-warp').innerHTML=html;
+					document.getElementById('toCommon').setAttribute('data-id',data.infoId)
+					document.getElementById('toCommon').setAttribute('data-type',type)
+						}
+					}
+				})
+			}
+		</script>
+	</body>
+
+</html>

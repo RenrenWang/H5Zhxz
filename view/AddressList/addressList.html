@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script type="text/javascript" src="../../js/flexible.js"></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/base.css" />
+		<link rel="stylesheet" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" href="../../css/style.css" />
+	</head>
+	<style>
+		html,
+		body {
+			background-color: #efeff4;
+		}
+		.tab-nav{
+				border-bottom:3px solid #d4d4d4;
+			}
+			.add {
+				font-size: 16px;
+				color: #fff;
+				line-height: 44px;
+			}
+			
+	</style>
+	</head>
+
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav w-top-bar  w-top-xfxcd">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" onclick='bk()'></a>
+			<h1 class="mui-title" id="title">数字村谱</h1>
+			<a class="mui-pull-right add" href="javascript:;" data-href="./add.html" onclick="toUrl(this)">添加</a>
+		</header>
+       <div class="mui-content">
+	       	 <div class="tab-nav" id="tab-nav" >
+					<a href="javascript:;" class="active" id="tabc_0">我的村谱</a>
+					<a href="javascript:;" id="tabc_1">我的组织</a>
+			</div>
+       </div>
+		
+	
+
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js" ></script>
+	<script>
+		mui.init();
+				
+	  var ws=null;
+		mui.plusReady(function() {
+			ws=plus.webview.currentWebview();
+			pushUrl(ws,'./addressList_0.html',88,0);
+				mui('#tab-nav a').each(function(i,item){
+			
+				(function(i,dom){
+					dom.addEventListener('tap',function(){
+						var m=0;
+						
+					 mui('#tab-nav a').each(function(si,sitem){
+					 	if(sitem==dom){
+					 		m=si;
+					 	}
+					     sitem.className="";
+					    // document.getElementById('tabc_'+si).style.display="none"
+					   })
+					 this.className="active";
+					//  document.getElementById('tabc_'+m).style.display="block"
+					   pushUrl(ws,'./addressList_'+i+'.html',90,0);
+			      },false)
+				})(i,item);
+				
+			});
+			
+		})
+		 
+	</script>
+
+</html>

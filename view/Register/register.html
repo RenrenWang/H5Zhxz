@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en" class="feedback">
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>注册</title>
+		<script src="html5plus://ready"></script>
+		<link rel="stylesheet" type="text/css" href="../../css/mui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/style.css" />
+
+		<style>
+         html,body,.mui-content{
+         	background: #fff;
+         }
+       
+		</style>
+	</head>
+
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav w-top-bar  w-top-xfxcd">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title" id="title">注册</h1>
+		</header>
+		<div class="mui-content">
+			
+			<div class="reset marginT_20" >
+				 <div class="input-group res-input-group" >
+				 	  <input  type="text" placeholder="手机" id="username"/>
+				 	 <!-- <button class="login-submit post-btn">发送验证码</button>-->
+				 </div>
+				  <!--<div class="input-group res-input-group" >
+				 	  <input  type="text" placeholder="验证码" />
+				 	  <a href="javascript:;" class="msd">没收到？</a>
+				 </div>-->
+				 <div class="input-group" >
+				 	  <input  type="password" placeholder="登录密码" id="password"/>
+				 	 
+				 </div>
+				  <!--<p style="margin:20px 0;font-size:16px;background: #fff;color: #000;padding: 0 15px;">
+				用手机号注册或绑定过手机号的用户，可通过验证码重新设置密码。
+
+			    </p>-->
+				  <button class="login-submit post-btn" onclick="register()">同意</button>
+				  <p>点击-同意，即表示同意 <a href="javascript:;" class="font_main">《服务条款及隐私协议》</a></p>
+				
+				 
+			</div>
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+        <script src="../../js/common.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			function register(){
+				
+				
+				var username=document.getElementById('username').value;
+				var password=document.getElementById('password').value;
+				if(username===""||!isNumber(username)||username.length!=11){
+				  return	mui.alert("手机号格式有误")
+				}
+				if(password===""){
+					return	mui.alert("密码不能为空")
+				}
+				mui.ajax(ROOTURL + "/sysLogin.action?appUserRegister=&userLogin="+username+"&userLoginPwd="+password, {
+
+				dataType: 'json', //服务器返回json格式数据
+				type: 'get', //HTTP请求类型
+				timeout: 10000, //超时时间设置为10秒；
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				success: function(data) {
+					console.log(JSON.stringify(data));
+					if(data.result == "success") {
+                       mui.toast("注册成功", {
+							duration: 'long',
+							type: 'div'
+						});
+                       setTimeout(function(){
+                       	// plus.webview.currentWebview().close();
+                       },1000)
+					} else if(data.result == "fail") {
+						mui.toast(data.msg, {
+							duration: 'long',
+							type: 'div'
+						});
+					
+					}
+				},
+				error: function(xhr, type, errorThrown) {
+					//异常处理；
+					console.log(type);
+				}
+			});
+    
+			}
+			
+		 
+		</script>
+	</body>
+
+</html>

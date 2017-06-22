@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<script type="text/javascript" src="../../js/flexible.js"></script>
+		<link rel="stylesheet" href="../../css/base.css" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" href="../../css/style.css" />
+	</head>
+
+	<body>
+		<div class="mui-content" style="padding-bottom: 50px;">
+			<div class="card-list" id="card-list">
+				
+			</div>
+			
+			<div class="mui-card-footer" style="margin-top: 10px;">
+				<a class="mui-card-link" style="color: #000;font-weight: 600;font-size: 16px;">村庄详情</a>
+				
+		    </div>
+		    <div class="text-content" id="img-info" style="margin-top:10px ;">
+		    	<!--	<p><span></span></p>-->
+			</div>
+		</div>
+		
+		<div class="text-footer mui-bar">
+			<a href="javascript:;" onclick="bk()"><span class="mui-icon iconfont icon-jiantou1"></span></a>
+
+			<a href="javascript:;" class="mui-pull-right"><span class="mui-icon iconfont icon-bianjizitidaxiao"></span></a>
+
+			<a href="javascript:;" class="mui-pull-right"><span class="mui-icon iconfont icon-share"></span></a>
+			<a href="javascript:;" class="mui-pull-right"><span class="mui-icon iconfont icon-shoucang"></span></a>
+			<a href="javascript:;" data-href="./topcolumnComment.html" data-id="1"  data-type="UL" onclick="toUrl(this)" class="mui-pull-right" id="toCommon"><span class="mui-icon iconfont icon-duihuakuang" style="transform: translateY(3px);"></span></a>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script>
+			mui.init()
+			mui.plusReady(function() {
+
+			})
+			
+			mui.init()
+			mui.plusReady(function(){
+				
+			})
+				window.addEventListener('id', function(event) {
+
+				console.log("---->"+event.detail.id);
+				setHtml(event.detail.id);
+			})
+
+			function setHtml(id) {
+				
+				mui.ajax(BASEURL + "/newsAction.action?affType=DV&villId="+id, {
+
+					dataType: 'json', //服务器返回json格式数据
+					type: 'get', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+
+						if(data.result == "success") {
+							var data = (data.data)[0];
+						    console.log(JSON.stringify(data));
+							var html='<div class="mui-card">'+
+					'<div class="mui-card-header mui-card-media" style="height:40vw;background-image:url('+ROOTURL+data.villAnnex+')"></div>'+
+					'<div class="mui-card-footer">'+
+						'<a class="mui-card-link" style="color: #000;font-weight: 600;">'+data.villTitle+'</a>'+
+						'<a class="mui-card-link">22<span class="mui-icon iconfont icon-duihuakuang" style="font-size:14px ;"></span></a>'+
+					'</div>'+
+					'<div class="mui-card-footer">'+
+						'<a class="mui-card-link" style="color: #000;font-size: 14px;"><span class="mui-icon iconfont  icon-dizhi"></span>'+data.villDescription+'</a>'+
+						'<a class="mui-card-link"><span class="mui-icon iconfont  icon-jikediancanicon13"></span></a>'+
+					'</div>'+
+				'</div>';
+				
+				     document.getElementById('card-list').innerHTML=html;
+				     
+				    
+				     document.getElementById('img-info').innerHTML="<img src='"+ROOTURL+data.villMsuri+"' width='100%'/>";
+							document.getElementById('toCommon').setAttribute('data-id',data.villId)
+						}
+					}
+				})
+			}
+		</script>
+	</body>
+
+</html>

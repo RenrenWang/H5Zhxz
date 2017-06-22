@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<script type="text/javascript" src="../../js/flexible.js"></script>
+		<link rel="stylesheet" href="../../css/base.css" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" href="../../css/style.css" />
+	</head>
+<style>
+	.text-content p{
+	  color: #000;
+	}
+</style>
+	<body >
+		
+		<div class="mui-content" style="padding-bottom: 50px;" id="lib-content">
+			
+		</div>
+		<div class="text-footer mui-bar">
+			<a href="javascript:;" onclick="bk()"><span class="mui-icon iconfont icon-jiantou1"></span></a>
+
+			<a href="javascript:;" class="mui-pull-right"><span class="mui-icon iconfont icon-bianjizitidaxiao"></span></a>
+
+			<a href="javascript:;" class="mui-pull-right"><span class="mui-icon iconfont icon-share"></span></a>
+			<a href="javascript:;" class="mui-pull-right"><span class="mui-icon iconfont icon-shoucang"></span></a>
+			<a href="javascript:;" data-href="./topcolumnComment.html" data-id="1" onclick="toUrl(this)"   class="mui-pull-right" id="toCommon"><span class="mui-icon iconfont icon-duihuakuang" style="transform: translateY(3px);"></span></a>
+			<a href="javascript:;" class="mui-pull-right"><span class="mui-icon iconfont icon-shanchu" ></span></a>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script>
+			mui.init();
+		
+			window.addEventListener('id', function(event) {
+
+				console.log(event.detail.id);
+			
+				setHtml(event.detail.id);
+			})
+
+			function setHtml(id) {
+				mui.ajax(BASEURL + "/newsAction.action?affType=DZ&msgId=" + id, {
+
+					dataType: 'json', //服务器返回json格式数据
+					type: 'get', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+
+						if(data.result == "success") {
+							var data = (data.data)[0];
+							var html='<div class="text-top">'+
+				'<h2 class="mui-h4"> '+data.msgTitle+'</h2>'+
+				'<p><span>'+ (new Date(data['createDate']).Format("yyyy-MM-dd hh:mm:ss")) +'</span><span class="mui-pull-right"><font class="font">0</font>条评论</span></p>'+
+			'</div>'+
+			'<div class="mui-card-footer">'+
+			'<a class="mui-card-link" style="color: #000;font-size: 14px;"><span class="mui-icon iconfont  icon-dizhi"></span>'+data.msgAddr+'</a>'+
+  		   '</div>'+
+			'<div class="text-content marginT_10 ">'+
+				 '<p class="mui-h4">截止时间：'+ (new Date(data['maintDate']).Format("yyyy-MM-dd")) +'<p>'+
+				 '<h2 class="mui-h4 marginT_20">内容描述</h2>'+
+				 ' <p>'+data.msgText+'</p>'+
+				 ' <h2 class="mui-h4 marginT_20">联系方式</h2>'+
+				 ' <p class="fontcolor_ls"><a href="tel:'+data.msgTel+'" class="fontcolor_ls">'+data.msgTel+'</a></p>'+
+			'</div>'+
+		   '<div  class="imgs">'+
+		   	    
+		   '</div>';
+				
+				document.getElementById('lib-content').innerHTML=html;
+						document.getElementById('toCommon').setAttribute('data-id',data.msgId)
+						}
+					}
+				})
+			}
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/base.css" />
+		<link rel="stylesheet" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" href="../../css/style.css" />
+  <style>
+  	html,body,.mui-content{
+  		height: 100%;
+  		width: 100%;
+  			background: #fff;
+  			overflow: hidden;
+  	}
+  
+ 
+  
+  </style>
+	</head>
+
+	<body>
+
+		<div class="mui-content">
+			
+			<div class="mui-text-center login-logo">
+				<img src="../../img/landing_logo.png" height="100px" width="100px" />
+			</div>
+			<div class="login-form">
+				<form>
+					<div class="inputs">
+						<div class="input-group bottom-line">
+							<input type="text" placeholder="手机/用户名"  class="input-text" id="username"/>
+							 <span class="mui-icon iconfont icon-wode"></span>
+						</div>
+						<div class="input-group">
+							<input type="password" placeholder="密码" id="password" class="input-password mui-input-password"/>
+						    <span class="mui-icon iconfont icon-mima"></span>
+						</div>
+					</div>
+					<a class="login-submit post-btn" href="javascript:;" onclick="login()">登录</a>
+				</form>
+				<div class="login-link">
+					  <p class="mui-clearfix">
+					  	<a href="javascript:;" class="mui-pull-left"  onclick="toUrl(this)" data-href="../ResetPassword/resetPassword.html">忘记密码？</a>
+					     <a href="javascript:;" class="mui-pull-right"  onclick="toUrl(this)" data-href="../Register/register.html">新用户注册</a>
+					  </p>
+					  <!--<p >
+					   <a href="javascript:;" class="mui-pull-right">随便看看</a>
+					  </p>-->
+				</div>
+			</div>
+			
+		</div>
+
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script src="../../js/common.js"></script>
+	<script>
+		mui.init({
+			swipeBack: true //启用右滑关闭功能
+		});
+		
+		function login(){
+				
+				
+				var username=document.getElementById('username').value;
+				var password=document.getElementById('password').value;
+				if(username===""){
+				  return	mui.alert("用户名不能为空")
+				}
+				if(password===""){
+					return	mui.alert("密码不能为空")
+				}
+				mui.ajax(ROOTURL + "/sysLogin.action?appLogin=&userLogin="+username+"&userLoginPwd="+password, {
+
+				dataType: 'json', //服务器返回json格式数据
+				type: 'get', //HTTP请求类型
+				timeout: 10000, //超时时间设置为10秒；
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				success: function(data) {
+					console.log(JSON.stringify(data));
+					if(data.result == "success") {
+                       mui.toast("登录成功", {
+							duration: 'long',
+							type: 'div'
+						});
+						data.username=username;
+					   setLocalStorage("user",data);
+                      plus.webview.getWebviewById('./view/Me/me.html').reload();
+                      plus.webview.currentWebview().close();
+					} else if(data.result == "fail") {
+						mui.toast(data.msg, {
+							duration: 'long',
+							type: 'div'
+						});
+					
+					}
+				},
+				error: function(xhr, type, errorThrown) {
+					//异常处理；
+					console.log(type);
+				}
+			});
+    
+			}
+			
+	</script>
+
+</html>

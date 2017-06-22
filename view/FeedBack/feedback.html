@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en" class="feedback">
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>问题反馈</title>
+		<script src="html5plus://ready"></script>
+		<link rel="stylesheet" type="text/css" href="../../css/mui.min.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/base.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/style.css" />
+
+	</head>
+
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav w-top-bar  w-top-xfxcd">
+
+			<h1 class="mui-title" id="title">意见反馈</h1>
+		</header>
+		<div class="mui-content">
+			<p style="margin:20px 0;font-size:16px;background: none;color: #000;padding: 0 15px;">
+				您的意见是我们进步的动力，有问题反馈过来，我们将全力为你解答、持续改进系统。
+
+			</p>
+			<div class="post-text">
+				<textarea autofocus maxlength="50" required placeholder="输入你的问题或建议" id="feedback-content" ></textarea>
+
+			</div>
+			<a class="post-btn" id="post-feedback">提交</a>
+			<div class="problems">
+				<div class="problems-top">
+					<span class="mui-pull-left">反馈信息</span>
+					<span class="mui-pull-right fontcolor_3a" onclick="setRefresh(this)">我的</span>
+				</div>
+				<div id="pullrefresh" class="mui-content mui-scroll-wrapper classify-wrapper" style="padding-top: 0px;">
+					<div class="mui-scroll">
+
+						<ul class="problems-list">
+							<!--<li>
+								<img src="../Home/img/landing_logo.png" class="head-img" />
+								<div class="item-text">
+									<p class="itxet-h"><span class="username ">邓美玉</span><span class="time">2017-05-11</span></p>
+									<p class="problems-content mui-h5">又不显示四海通姓名了</p>
+
+								</div>
+							</li>-->
+
+						</ul>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/common.js"></script>
+		<script type="text/javascript">
+			
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+
+					up: {
+						auto: true,
+						contentrefresh: '正在加载...',
+						callback: pullupRefresh
+					}
+				}
+			});
+
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			var userId = "";
+			var page = 1;
+            var T=false;
+			function setRefresh(_this) {
+				var user=isLogin();
+				if(!user){
+					return mui.alert("您还未登录，请登录");
+				}
+				T=!T;
+                _this.innerHTML=T? "全部":"我的";
+				page = 1;
+				if(T){
+					var user=isLogin();
+	                userId = user.pinfoId;
+	                
+				}else{
+				   	userId="";
+				}
+				
+             
+				var table = document.body.querySelector('.problems-list');
+				table.innerHTML ="";
+				pullupRefresh();
+               	mui('#pullrefresh').pullRefresh().refresh(true);
+				
+			}
+				
+			/**
+			 * 上拉加载具体业务实现
+			 */
+			function pullupRefresh() {
+            
+				mui.ajax(BASEURL + "/newsAction.action?affType=FL&fbUserid=" + userId + "&pageno=" + page, {
+
+					dataType: 'json', //服务器返回json格式数据
+					type: 'get', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+
+						if(data.result == "success") {
+							console.log(JSON.stringify(data));
+							mui('#pullrefresh').pullRefresh().endPullupToRefresh(++page >data.maxpage);
+							var data = data.data;
+							//参数为true代表没有更多数据了。
+							var table = document.body.querySelector('.problems-list');
+
+							for(var i = 0; i < data.length; i++) {
+								var li = document.createElement('li');
+
+								li.innerHTML = '<a href="javascript:;" data-href="./newsD.html" data-id="1">' +
+									'<img src="../../img/icon_user_white.png" class="head-img" />' + '<div class="item-text">' +
+									'<p class="itxet-h"><span class="username fontcolor_3a">' + data[i]['fbPerson'] + '</span><span class="time" style="font-size:12px">' + (new Date(data[i]['createDate']).Format("yyyy-MM-dd hh:mm:ss")) + '</span></p>' +
+									'<p class="problems-content mui-h5">' + data[i]['fbText'] + '</p>' +
+
+									'</div>' +
+									'</a>';
+								table.appendChild(li);
+							}
+
+						} else if(data.result == "fail") {
+							mui.toast(data.msg, {
+								duration: 'long',
+								type: 'div'
+							});
+							mui('#pullrefresh').pullRefresh().endPullupToRefresh(true)
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+						console.log(type);
+					}
+				});
+
+			}
+			//意见提交
+			document.getElementById('post-feedback').addEventListener('tap', function() {
+				var user=isLogin();
+				if(!user){
+					return mui.alert("您还未登录，请登录");
+				}
+				var textareaNode = document.getElementById('feedback-content');
+				var tvalue = textareaNode.value;
+				
+				if(tvalue === "" || !tvalue) {
+					return mui.alert("内容不能为空");
+				}
+				if(tvalue.length > 50) {
+					return mui.alert("内容不能大于50个字");
+				}
+				mui.ajax(BASEURL+'/newsAction.action?affType=MD&fbText='+tvalue+'&fbPerson='+user.userLogin+'&fbUserid='+user.pinfoId, {
+				
+					dataType: 'json', //服务器返回json格式数据
+					type: 'get', //HTTP请求类型
+					success: function(data) {
+						console.log(JSON.stringify(data));
+						if(data.result == "success") {
+							page=0;
+							var table = document.body.querySelector('.problems-list');
+							table.innerHTML ="";
+						    userId="";
+				               
+							mui('#pullrefresh').pullRefresh().refresh(true);
+							pullupRefresh();
+							textareaNode.value="";
+							} else if(data.result == "fail") {
+							mui.toast(data.msg, {
+								duration: 'long',
+								type: 'div'
+							});
+							
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+						console.log(type);
+					}
+				});
+			})
+		</script>
+	</body>
+
+</html>
+</script>
+</body>
+
+</html>

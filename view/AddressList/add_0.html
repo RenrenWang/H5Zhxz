@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script type="text/javascript" src="../../js/flexible.js"></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/base.css" />
+		<link rel="stylesheet" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" href="../../css/style.css" />
+	</head>
+	<style>
+		html,
+		body {
+			height: 100%;
+			background-color: #fff;
+		}
+		
+		.tab-nav {
+			border-bottom: 3px solid #d4d4d4;
+		}
+		
+		.add {
+			font-size: 16px;
+			color: #fff;
+			line-height: 44px;
+		}
+		
+		.warp {
+			background: #fff;
+		}
+		
+		.xz-list {
+			display: flex;
+			flex-wrap: wrap;
+			text-align: center;
+			flex-direction: row;
+		}
+		
+		.xz-list>li {
+			margin: 5px;
+			padding: 10px 0;
+			flex-basis: 20%;
+			width: 18%;
+			border: 1px solid #D4D4D4;
+			border-radius: 5px;
+		}
+		
+		.xz-list>li.active {
+			color: #09b992;
+			border-color: #09b992;
+		}
+		
+		.section {
+			overflow: hidden;
+			padding: 0 10px 10px 10px;
+			clear: both;
+		}
+		
+		.section-tit {
+			padding: 5px;
+			font-size: 14px;
+		}
+		
+		.bottomLine {
+			padding: 10px 5px;
+			border-bottom: 2px solid #E9E9E9;
+		}
+		
+		a.join-btn {
+			float: right;
+			display: inline-block;
+			padding: 10px 15px;
+			background: #09b992 !important;
+			color: #fff;
+			border-radius: 5px;
+		}
+	</style>
+	</head>
+
+	<body>
+
+		<div class="mui-content">
+			<div class="warp">
+				<div class="section">
+					<h3 class="mui-h4 section-tit bottomLine">所有乡镇</h3>
+					<ul class="xz-list" id="xz-list">
+
+					</ul>
+					<div class="section-d" id="xzd">
+
+					</div>
+				</div>
+				<div class="section" id="czd"> 
+					<!--<h3 class="mui-h4 section-tit bottomLine">乡镇1所属村庄</h3>
+					<ul class="xz-list">
+						<li class="active">村庄</li>
+						<li>村庄</li>
+						<li>村庄</li>
+						<li>村庄</li>
+						<li>村庄</li>
+						<li>村庄</li>
+					</ul>
+					-->
+				</div>
+				<div class="section-d" id="cz" style="padding:0 10px;">
+						<!--<h3 class="mui-h4 section-tit">村庄详情</h3>
+						<p><img class="mui-pull-left" style="margin:0 6px 6px;" height="50" width="50" src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1494222330942&di=41ec5c4cdc600b5b5ac98899975ec3e6&imgtype=0&src=http%3A%2F%2Fpic2.ooopic.com%2F12%2F49%2F54%2F03bOOOPIC3b_1024.jpg">乡镇详情乡镇详情乡镇详情乡镇详情乡镇详情 乡镇详情乡镇详情乡镇详情乡镇详情乡镇详情乡镇详情 乡镇详情 乡镇详情乡镇详情乡镇详情乡镇详情乡镇详情 乡镇详情乡镇详情乡镇详情乡镇详情乡镇详情乡镇详情 乡镇详情乡镇详情
+						</p>
+						<a href="javascript:;" class="join-btn">立即加入</a>-->
+					</div>
+			</div>
+		</div>
+
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js"></script>
+	<script>
+		mui.init();
+		var xzdlist = [];
+		var id_xz=0;
+		mui.ajax(BASEURL + "/baseDataAction.action?myTownVill=", {
+
+			dataType: 'json', //服务器返回json格式数据
+			type: 'get', //HTTP请求类型
+			timeout: 10000, //超时时间设置为10秒；
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			success: function(data) {
+
+				if(data.result == "success") {
+					var data = data.data;
+					xzdlist = data;
+					console.log(JSON.stringify(xzdlist))
+					var table = document.getElementById('xz-list');
+					var html = "";
+					for(var i = 0; i < data.length; i++) {
+						html += i == 0 ? '<li class="active"  data-id="' + i + '" onclick="checkLi(this)">' + data[i]['townTitle'] + '</li>' : '<li data-id="' + i + '" onclick="checkLi(this)">' + data[i]['townTitle'] + '</li>';
+					}
+					table.innerHTML = html;
+					setXZ(xzdlist, id_xz);
+                    setCz(xzdlist,0);
+                    setCzHtml(xzdlist[id_xz]['villData'],0)
+				} else if(data.result == "fail") {
+					//					   mui.toast(data.msg, {
+					//							duration: 'long',
+					//						 });
+					console.log(data.msg);
+				}
+
+			},
+			error: function(xhr, type, errorThrown) {
+				//异常处理；
+				console.log(type);
+			}
+		});
+		//			mui('#xz-list li').each(function(i,item){
+
+		function checkLi(_this) {
+			removeClass('#xz-list li');
+			_this.className = "active";
+			var id = _this.getAttribute('data-id');
+			document.getElementById('cz').innerHTML="";
+			document.getElementById('czd').innerHTML="";
+			id_xz=id;
+			console.log(JSON.stringify(xzdlist[id]))
+			setXZ(xzdlist, id);
+			setCz(xzdlist,id);	
+			setCzHtml(xzdlist[id_xz]['villData'],0)
+		}
+		
+
+		function setXZ(datalist, i) {
+			document.getElementById('xzd').innerHTML = '<h3 class="mui-h4 section-tit">乡镇详情</h3>' +
+				'<p style="margin-left:5px">' + datalist[i]['townDescription'] + '</p>' +
+				'<a href="javascript:;" class="join-btn"  data-join="&townId=' +datalist[i]['townId'] + '" onclick="join(this)">立即加入</a>';
+		
+		}
+		
+	
+		 function setCz(dlist,id){
+		 		if(dlist[id]['villData'].length<=0){
+			document.getElementById('czd').innerHTML='<h3 class="mui-h4 section-tit bottomLine">所属村庄</h3><p>暂无村庄数据数据</p>';
+			return;
+		 }
+		var czlist="";
+		for(var v=0;v<dlist[id]['villData'].length;v++){
+				czlist+=v==0?'<li class="active"  data-id="'+v+'"  onclick="checkZ(this)">'+dlist[id]['villData'][v]['villTitle']+'</li>':'<li  data-id="'+v+'"  onclick="checkZ(this)">'+dlist[id]['villData'][v]['villTitle']+'</li>';
+		 }
+	   
+		document.getElementById('czd').innerHTML='<h3 class="mui-h4 section-tit bottomLine">所属村庄</h3>'+
+					'<ul class="xz-list" id="cz-list">'+
+						czlist+
+					'</ul>';
+		   }
+		function setCzHtml(datalist, i) {
+			if(datalist.length<=0)
+			 return;
+			document.getElementById('cz').innerHTML = '<h3 class="mui-h4 section-tit">村庄详情</h3>' +
+				'<p style="margin-left:5px">' +(datalist[i]['villDescription']?datalist[i]['villDescription']:"") + '</p>' +
+				'<a href="javascript:;" class="join-btn" data-join="&townId='+xzdlist[id_xz]['townId']+'&villId=' + datalist[i]['villId'] + '"  onclick="join(this)">立即加入</a>';
+		
+		}
+		function checkZ(_this){
+			removeClass('#cz-list li');
+			_this.className = "active";
+			var id = _this.getAttribute('data-id');
+			console.log(JSON.stringify(xzdlist[id]))
+			setCzHtml(xzdlist[id_xz]['villData'], id);
+		}
+		
+		function  join(_this){
+			 ///baseDataAction.action?joinInfo=&pinfoId=3&townId=1&villId=1&deptId=1
+			    var user = isLogin();
+			    var postStr=_this.getAttribute('data-join');
+			  
+			 	if(!user){
+					return mui.alert("您还未登录，请登录");
+				}
+			    mui.ajax(BASEURL + "/baseDataAction.action?joinInfo=&pinfoId="+user.pinfoId+postStr, {
+	
+				dataType: 'json', //服务器返回json格式数据
+				type: 'get', //HTTP请求类型
+				timeout: 10000, //超时时间设置为10秒；
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				success: function(data) {
+	
+					if(data.result == "success") {
+						
+					return mui.alert(data.msg);
+					} else if(data.result == "fail") {
+						//					   mui.toast(data.msg, {
+						//							duration: 'long',
+						//						 });
+						return mui.alert(data.msg);
+					}
+	
+				},
+				error: function(xhr, type, errorThrown) {
+					//异常处理；
+					console.log(type);
+				}
+			});
+		}
+		function removeClass(dom) {
+			mui(dom).each(function(i, item) {
+				this.className = "";
+			})
+		}
+	</script>
+
+</html>

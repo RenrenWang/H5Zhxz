@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script type="text/javascript" src="../../js/flexible.js"></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../css/base.css" />
+		<link rel="stylesheet" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" href="../../css/style.css" />
+	</head>
+	<style>
+		html,
+		body {
+			background-color: #efeff4;
+		}
+	</style>
+	</head>
+
+	<body>
+		<header id="header" class="mui-bar mui-bar-nav w-top-bar  w-top-xfxcd">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" onclick='bk()'></a>
+			<h1 class="mui-title" id="title">三务公开</h1>
+		</header>
+       <div class="mui-content">
+	       	 <div class="tab-nav" id="tab-nav" >
+					<a href="javascript:;" class="active" id="tabc_0">村务公开</a>
+					<a href="javascript:;" id="tabc_1">党务公开</a>
+					<a href="javascript:;" id="tabc_2">财务公开</a>
+			</div>
+       </div>
+		
+	
+
+	</body>
+	<script src="../../js/mui.min.js"></script>
+	<script type="text/javascript" src="../../js/common.js" ></script>
+	<script>
+		mui.init();
+				
+	  var ws=null;
+		mui.plusReady(function() {
+			ws=plus.webview.currentWebview();
+			pushUrl(ws,'./swopen_0.html',95,0);
+				mui('#tab-nav a').each(function(i,item){
+			
+				(function(i,dom){
+					dom.addEventListener('tap',function(){
+						var m=0;
+						
+					 mui('#tab-nav a').each(function(si,sitem){
+					 	if(sitem==dom){
+					 		m=si;
+					 	}
+					     sitem.className="";
+					    // document.getElementById('tabc_'+si).style.display="none"
+					   })
+					 this.className="active";
+					//  document.getElementById('tabc_'+m).style.display="block"
+					   pushUrl(ws,'./swopen_'+i+'.html',95,0);
+			      },false)
+				})(i,item);
+				
+			});
+			
+		})
+		 
+	</script>
+
+</html>

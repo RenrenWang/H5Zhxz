@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<script type="text/javascript" src="../../js/flexible.js"></script>
+		<link rel="stylesheet" href="../../css/base.css" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" href="../../css/style.css" />
+	</head>
+
+	<body class="bg_FFF">
+		<header id="header" class="mui-bar mui-bar-nav w-top-bar  w-top-xfxcd">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left" onclick='bk()'></a>
+			<h1 class="mui-title" id="title">全部评论</h1>
+		</header>
+		<div class="mui-content" style="padding-bottom: 50px;background: #fff;">
+			<div class="text-top" id="text-top">
+			
+			</div>
+			<div class="text-content">
+				<div id="pullrefresh" class="mui-content mui-scroll-wrapper classify-wrapper">
+					<div class="mui-scroll">
+						<ul class="comment-list">
+							<!--<li>
+					 	  	<div class="cl-top">
+					 	  		 <img src="../../img/icon_user_white.png"  class="cl-img"/>
+					 	  		 <div class="cl-info">
+					 	  		 	<span class="cl-username">18758716921</span>
+					 	  		 	<span class="cl-titme">2017-5-18</span>
+					 	  		 </div>
+					 	  	</div>
+					 	  	 <div class="cl-content">
+					 	  	 	这条新闻太有趣了呀，这条新闻太有趣了呀，这条新闻太有趣了呀，这条新闻太有趣了呀
+					 	  	 	这条新闻太有趣了呀，这条新闻太有趣了呀
+					 	  	 	这条新闻太有趣了呀，这条新闻太有趣了呀
+					 	  	 	这条新闻太有趣了呀
+					 	  	 </div>
+					 	  	  
+					 	  </li> -->
+
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="text-footer mui-bar comment-bar">
+
+			<input type="text" class="comment-input" placeholder="我来说两句" id="post-common-content" />
+			<a href="javascript:;" id="post-common-btn"><span class="mui-icon iconfont icon-fabu" style="margin-left: 10px;color: #09b992;"></span></a>
+		</div>
+		<script type="text/javascript" src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js"></script>
+		<script>
+			mui.init({
+				pullRefresh: {
+					container: '#pullrefresh',
+
+					up: {
+						auto: true,
+						contentrefresh: '正在加载...',
+						  contentnomore:'无更多评论',
+						callback: pullupRefresh
+					}
+				}
+			});
+			
+	var id="";
+	
+			var page = 1;
+
+			/**
+			 * 上拉加载具体业务实现
+			 */
+           window.addEventListener('id', function(event) {
+
+				id=event.detail.id;
+				console.log("id--->"+id);
+	        })  
+			function pullupRefresh() {
+             console.log("id2--->"+id);
+				mui.ajax(BASEURL + "/newsAction.action?llbCommentDetail=&affType=PZ&msgId="+id+"&&pageno=" + page, {
+
+					dataType: 'json', //服务器返回json格式数据
+					type: 'get', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+					
+						if(data.result == "success") {
+							var commCount=0;
+						if(data.commCount){
+							commCount=data.commCount;
+						 }
+							var htmlTop='<h2>'+data.msgText+'</h2>'+
+				    '<p><span>'+(new Date(data['msgReldate']).Format("yyyy-MM-dd hh:mm:ss"))+'</span><span class="mui-pull-right"><font class="font">'+commCount+'</font>条评论</span><span class="mui-pull-right"></span></p>';
+                    document.getElementById('text-top').innerHTML=htmlTop;
+                    	 var data = data.data;
+                       console.log(JSON.stringify(data));
+                           	var table = document.body.querySelector('.comment-list');
+							mui('#pullrefresh').pullRefresh().endPullupToRefresh(++page >(data.maxpage?data.maxpage:0));
+						    console.log(typeof data);
+						    if(typeof data!="object"){
+						     	return;
+						     }
+							//参数为true代表没有更多数据了。
+							 for(var i = 0; i < data.length; i++) {
+								var li = document.createElement('li');
+                                 
+								li.innerHTML = '<div class="cl-top" data-id="'+data[i]['commIds']+'">' +
+									'<img src="../../img/icon_user_white.png"  class="cl-img"/>' +
+									'<div class="cl-info">' +
+									'<span class="cl-username">'+data[i]['pinfoName']+'</span>' +
+									'<span class="cl-titme">'+(new Date(data[i]['commDate']).Format("yyyy-MM-dd hh:mm:ss"))+'</span>' +
+									'</div>' +
+									'</div>' +
+									' <div class="cl-content">' +
+									  data[i]['commText'] +
+
+									'</div>';
+								table.appendChild(li);
+							}
+
+						} else if(data.result == "fail") {
+							mui.toast(data.msg, {
+								duration: 'long',
+								type: 'div'
+							});
+							mui('#pullrefresh').pullRefresh().endPullupToRefresh(true)
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+						console.log(type);
+					}
+				});
+
+			}
+
+			document.addEventListener('DOMContentLoaded', function() {
+			
+				var postCommonBtn = document.getElementById('post-common-btn');
+				 postCommonBtn.addEventListener('tap', postCommon, false);
+			});
+          
+			function　 postCommon() {
+				var user=isLogin();
+				if(!user){
+					return mui.alert("未登录请登录");
+				}
+				var postCommonContent = document.getElementById('post-common-content').value;
+				if(!postCommonContent || postCommonContent == "" || postCommonContent == null) {
+					return mui.toast("评论内容不能为空", {
+						duration: 'long',
+						type: 'div'
+					});
+				}
+				mui.ajax(BASEURL + "/newsAction.action?commentInfo=&affType=PZ&itemId="+id+"&pinfoId="+user.pinfoId+"&commText="+postCommonContent, {
+
+						dataType: 'json', //服务器返回json格式数据
+						type: 'get', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						headers: {
+							'Content-Type': 'application/json'
+						},
+						success: function(data) {
+							if(data.result == "success") {
+								var li = document.createElement('li');
+								li.innerHTML = '<div class="cl-top">' +
+									'<img src="../../img/icon_user_white.png"  class="cl-img"/>' +
+									'<div class="cl-info">' +
+									'<span class="cl-username">'+user.pinfoName+'</span>' +
+									'<span class="cl-titme">'+data['currDate']+'</span>' +
+									'</div>' +
+									'</div>' +
+									' <div class="cl-content">' +
+									data.commText+
+
+									'</div>';
+								var list=document.body.querySelector('.comment-list');
+							   // table.appendChild(li);
+							    list.insertBefore(li,list.childNodes[0]);
+							     document.getElementById('post-common-content').value="";
+							} else if(data.result == "fail") {
+								mui.toast(data.msg, {
+									duration: 'long',
+									type: 'div'
+								});
+                             }
+							},
+							error: function(xhr, type, errorThrown) {
+								//异常处理；
+								console.log(type);
+							}
+						});
+
+				}
+		</script>
+	</body>
+
+</html>

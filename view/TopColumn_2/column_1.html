@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<script type="text/javascript" src="../../js/flexible.js"></script>
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../../fonts/iconfont.css" />
+		<link rel="stylesheet" href="../../css/base.css" />
+		<link rel="stylesheet" href="../../css/style.css" />
+	</head>
+
+	<body>
+
+		<div class="w-content">
+			<div class="tab">
+				<ul id="tab-ul">
+					<li class="active" id="defaultTab">所有</li>
+					<li>村品</li>
+					<li>专场</li>
+				</ul>
+			</div>
+			<div class="tab-content" style="padding-top:50px;">
+				<div id="tabc_0" style="display:block;">
+					   
+				</div>
+		
+				<div id="tabc_1">
+				      
+				</div>
+				<div id="tabc_2">
+					
+				</div>
+			</div>
+		</div>
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="../../js/common.js" ></script>
+		<script type="text/javascript">
+			mui.init();
+         
+            document.addEventListener('gofirst',function(){
+         	 mui.trigger(document.getElementById("defaultTab"),'tap');
+         })
+	  var ws=null;
+		mui.plusReady(function() {
+			ws=plus.webview.currentWebview();
+				mui('#tab-ul li').each(function(i,item){
+			
+				(function(i,dom){
+					dom.addEventListener('tap',function(){
+						var m=0;
+						
+					 mui('#tab-ul li').each(function(si,sitem){
+					 	if(sitem==dom){
+					 		m=si;
+					 	}
+					     sitem.className="";
+					   //  document.getElementById('tabc_'+si).style.display="none"
+					   })
+					 this.className="active";
+					 // document.getElementById('tabc_'+m).style.display="block"
+					   pushUrl(ws,'./column_1_'+i+'.html',50,0);
+			      },false)
+				})(i,item);
+				
+			});
+			
+		})
+		
+		</script>
+	</body>
+
+</html>
