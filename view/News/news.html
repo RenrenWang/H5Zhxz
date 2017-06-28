@@ -95,8 +95,8 @@
 	                    
 							item.className = 'mui-slider-item';
 							item.innerHTML = '<a href="javascript:;" data-href="./newsD.html" data-id="' + data[t]['lpIds'] + '">' +
-								'<img src="' + ROOTURL + data[t]['lpUri'] + '">' +
-								'<p class="mui-slider-title">'+data[t]['lpRemak']+'</p>' +
+								'<img src="' + ROOTURL + data[t]['lpUri'] + '"  height="200">' +
+								'<p class="mui-slider-title">'+data[t]['lpName']+'</p>' +
 								'</a>';
 							if(t == 0) {
 								itemCHtml += '<div class="mui-indicator mui-active"></div>'
@@ -149,11 +149,11 @@
 							var li = document.createElement('li');
 							li.className = 'mui-table-view-cell mui-media';
 							li.innerHTML = '<a href="javascript:;"data-href="./newsD.html" data-id="' + data[i]['infoId'] + '" onclick="toUrl(this)">' +
-								'<img class="mui-media-object mui-pull-right" src="' + ROOTURL + data[i]['infoAnnex'] + '"  onerror="isImg(this)">' +
+								'<img class="mui-media-object mui-pull-right" src="' + ROOTURL + data[i]['infoAnnex'] + '"  onerror="isImg(this)" >' +
 								'<div class="mui-media-body">' +
 								'<h3 >' + data[i]['infoTitle'] + '</h3>' +
 								'<p class="mui-ellipsis text-hidden ">' + data[i]['infoDescription'] + '</p>' +
-								'<p class="mui-ellipsis timeform" ><span>' + (new Date(data[i]['createDate']).Format("yyyy-MM-dd hh:mm:ss")) + '</span><span style="margin-left: 15px;">'+data[i]['villTitle']+'</span></p>' +
+								'<p class="mui-ellipsis timeform" ><span>' + (new Date(data[i]['createDate']).Format("yyyy-MM-dd hh:mm:ss")) + '</span><span style="margin-left: 15px;">'+(data[i]['townTitle']?data[i]['townTitle']:'')+(data[i]['villTitle']?data[i]['villTitle']:'')+'</span></p>' +
 								'</div>' +
 								'</a>';
 							table.appendChild(li);

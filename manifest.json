@@ -1355,6 +1355,16 @@
 				],
 				"refer": [],
 				"priority": 0
+			},
+			"view/DwO/openD.html": {
+				"resources": [
+					"js/mui.zoom.js",
+					"js/mui.previewimage.js",
+					"css/imgBig.css",
+					"fonts/iconfont.woff"
+				],
+				"refer": [],
+				"priority": 0
 			}
 		},
 		"idle": {
