@@ -54,7 +54,7 @@
 			</div>
 
 			<div class="mui-slider w-slider">
-				<div class="mui-slider-group">
+				<div class="mui-slider-group ">
 
 					<!--<div class="mui-slider-item">
 						<a href="#"><img src="http://img06.tooopen.com/images/20170321/tooopen_sy_202673188311.jpg" /></a>
@@ -146,19 +146,10 @@
 	<script src="../../js/mui.min.js"></script>
 	<script type="text/javascript" src="../../js/common.js"></script>
 	<script>
-		mui.init({
-			swipeBack: false //启用右滑关闭功能
-		});
-		mui.plusReady(function() {
-			mui('.mui-slider').slider({
-				interval: 3000 //自动轮播周期，若为0则不自动播放，默认为0；
-			});
-
-		})
+		mui.init();
+		
 		document.addEventListener('DOMContentLoaded', function() {
-			mui('.mui-slider').slider({
-				interval: 3000 //自动轮播周期，若为0则不自动播放，默认为0；
-			});
+			
 			mui.ajax(BASEURL + "/newsAction.action?affType=HI", {
 				dataType: 'json', //服务器返回json格式数据
 				type: 'get', //HTTP请求类型
@@ -178,7 +169,7 @@
 							var item = document.createElement('div');
 
 							item.className = 'mui-slider-item';
-							item.innerHTML = '<a href="javascript:;" data-href="./newsD.html" data-id="' + data[t]['lpIds'] + '" onclick="toUrl(this)">' +
+							item.innerHTML = '<a href="javascript:;" data-id="' + data[t]['lpIds'] + '" >' +
 								'<img src="' + ROOTURL + data[t]['lpUri'] + '">' +
 
 								'</a>';
@@ -189,7 +180,9 @@
 							}
 							table.appendChild(item);
 						}
-
+                         mui('.mui-slider').slider({
+			interval: 3000 //自动轮播周期，若为0则不自动播放，默认为0；
+		});
 						siderC.innerHTML = itemCHtml;
 					}
 				}

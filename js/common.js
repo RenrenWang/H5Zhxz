@@ -5,6 +5,9 @@ var FILEURL = "http://121.40.241.28:7070/zhxz";
 var aniShow = "slide-in-right";
 var this_href = "";
 
+mui('#pullrefresh').on('tap','a',function(){
+	toUrl(this);
+})
 function toUrl(_this) {
 	//主列表点击事件
 	if(this_href == _this) {
